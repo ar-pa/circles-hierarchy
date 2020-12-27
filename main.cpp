@@ -7,7 +7,7 @@
 using namespace std;
 typedef long long ll;
 
-const int maxn = 2e5 + 14;
+const int maxn = 2e5 + 14, inf = 1e9;
 int sweep_line_x = -1e8;
 const double EPS = 1e-9;
 
@@ -57,7 +57,7 @@ int main() {
         events.emplace_back(circle[i].x + circle[i].r, i);
     }
     sort(events.begin(), events.end());
-    circle[0] = {0, 0, int(1e9)};
+    circle[0] = {0, 0, inf};
     set<Interval> intervals({{0, {true, circle[0]}, {false, circle[0]}}});
     for (auto tmp : events) {
         int sw_x = tmp.first, circle_id = tmp.second;

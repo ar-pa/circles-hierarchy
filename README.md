@@ -1,6 +1,8 @@
 # circles-hierarchy
 Implementation of A Sweep-Line Algorithm for the Inclusion Hierarchy among Circles
 
+[Here](https://projecteuclid.org/download/pdf_1/euclid.jjiam/1150725475) is the link to the paper.
+
 ## Install prerequest softwares and libraries
 ```
 sudo apt-get install cmake make python3-tk graphviz

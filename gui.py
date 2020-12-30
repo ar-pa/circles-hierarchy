@@ -1,4 +1,5 @@
 import networkx as nx
+import numpy as np
 import matplotlib.pyplot as plt
 import os
 from math import dist
@@ -8,16 +9,19 @@ from pygame.locals import *
 import pydot
 from networkx.drawing.nx_pydot import graphviz_layout
 
+CMAKE_DIR = "cmake-build-release/"
+EXEC_NAME = "circles-hierarchy-core"
+
 pygame.init()
 pygame.display.set_caption('Circles Hierarchy')
 WIDTH = int(pygame.display.Info().current_w * 0.7)
 HEIGHT = int(pygame.display.Info().current_h * 0.7)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-font = pygame.font.Font(None, 40)
 
 
 def get_circles():
-    text = font.render('Solve!', True, "black", "white")
+    font = pygame.font.Font(None, 40)
+    text = font.render('Solve!', True, "black", "gray")
     text_rect = text.get_rect()
     text_rect.bottom = HEIGHT
     text_rect.centerx = WIDTH // 2
@@ -52,15 +56,37 @@ def raw_data(circles):
     return raw_str
 
 
+def get_tree(circles):
+    print(os.popen("cmake -S . -B " + CMAKE_DIR).read())
+    print(os.popen("make -C " + CMAKE_DIR).read())
+    plain_tree = Popen(CMAKE_DIR + EXEC_NAME, stdin=PIPE, stdout=PIPE).communicate(raw_data(circles).encode())[
+        0].decode()
+    g = nx.Graph()
+    for line in plain_tree.split('\n')[:-1]:
+        edge = line.split()
+        g.add_edge(edge[0], edge[1])
+    return g
+
+
+def color_circles(circles, colors):
+    screen.fill("white")
+    circles.sort(key=lambda circle: circle[1], reverse=True)
+    for i in range(len(circles)):
+        pygame.draw.circle(screen, colors[i], circles[i][0], circles[i][1])
+    pygame.display.update()
+
+
 circles = get_circles()
-CMAKE_DIR = "cmake-build-release/"
-EXEC_NAME = "circles-hierarchy-core"
-print(os.popen("cmake -S . -B " + CMAKE_DIR).read())
-print(os.popen("make -C " + CMAKE_DIR).read())
-plain_tree = Popen(CMAKE_DIR + EXEC_NAME, stdin=PIPE, stdout=PIPE).communicate(raw_data(circles).encode())[0].decode()
-g = nx.Graph()
-for line in plain_tree.split('\n')[:-1]:
-    edge = line.split()
-    g.add_edge(edge[0], edge[1])
-nx.draw(g, graphviz_layout(g, "dot"))
+g = get_tree(circles)
+colors = [tuple(np.random.choice(range(256), size=3)) for _ in range(len(circles))]
+color_circles(circles, colors)
+colors = [(0, 0, 0)] + colors
+pos = graphviz_layout(g, "dot")
+nx.draw_networkx_nodes(g, pos, node_color=[(color[0] / 256, color[1] / 256, color[2] / 256) for color in colors])
+nx.draw_networkx_edges(g, pos)
 plt.show()
+while True:
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            quit()

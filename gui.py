@@ -6,7 +6,6 @@ from math import dist
 from subprocess import Popen, PIPE
 import pygame
 from pygame.locals import *
-import pydot
 from networkx.drawing.nx_pydot import graphviz_layout
 
 CMAKE_DIR = "cmake-build-release/"

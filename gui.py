@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
@@ -61,16 +63,19 @@ def get_tree(circles):
     plain_tree = Popen(CMAKE_DIR + EXEC_NAME, stdin=PIPE, stdout=PIPE).communicate(raw_data(circles).encode())[
         0].decode()
     g = nx.Graph()
+    for i in range(len(circles)):
+        g.add_node(i)
     for line in plain_tree.split('\n')[:-1]:
-        edge = line.split()
+        edge = list(map(int, line.split()))
         g.add_edge(edge[0], edge[1])
     return g
 
 
 def color_circles(circles, colors):
     screen.fill("white")
-    circles.sort(key=lambda circle: circle[1], reverse=True)
-    for i in range(len(circles)):
+    order_of_painting = [i for i in range(len(circles))]
+    # order_of_painting.sort(key=lambda i: circles[i][1], reverse=True)
+    for i in order_of_painting:
         pygame.draw.circle(screen, colors[i], circles[i][0], circles[i][1])
     pygame.display.update()
 
@@ -78,6 +83,10 @@ def color_circles(circles, colors):
 circles = get_circles()
 g = get_tree(circles)
 colors = [tuple(np.random.choice(range(256), size=3)) for _ in range(len(circles))]
+print(circles)
+print(g.nodes)
+print(g.edges)
+print(colors)
 color_circles(circles, colors)
 colors = [(0, 0, 0)] + colors
 pos = graphviz_layout(g, "dot")

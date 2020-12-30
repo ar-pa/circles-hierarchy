@@ -72,19 +72,15 @@ def get_tree(circles):
 def color_circles(circles, colors):
     screen.fill("white")
     order_of_painting = [i for i in range(len(circles))]
-    # order_of_painting.sort(key=lambda i: circles[i][1], reverse=True)
     for i in order_of_painting:
         pygame.draw.circle(screen, colors[i], circles[i][0], circles[i][1])
     pygame.display.update()
 
 
 circles = get_circles()
+circles.sort(key=lambda circle: circle[1], reverse=True)
 g = get_tree(circles)
 colors = [tuple(np.random.choice(range(256), size=3)) for _ in range(len(circles))]
-print(circles)
-print(g.nodes)
-print(g.edges)
-print(colors)
 color_circles(circles, colors)
 colors = [(0, 0, 0)] + colors
 pos = graphviz_layout(g, "dot")

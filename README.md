@@ -1,5 +1,5 @@
 # circles-hierarchy
-Implementation of A Sweep-Line Algorithm for the Inclusion Hierarchy among Circles
+Implementation of A Sweep-Line Algorithm for the Inclusion Hierarchy Among Circles
 
 [Here](https://projecteuclid.org/download/pdf_1/euclid.jjiam/1150725475) is the link to the paper.
 
